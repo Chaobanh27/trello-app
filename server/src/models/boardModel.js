@@ -7,6 +7,7 @@ import { formattedTime } from '~/utils/TimeFormat'
 import { BOARD_TYPES } from '~/utils/constants'
 import { columnModel } from './columnModel'
 import { cardModel } from './cardModel'
+import { userModel } from '~/models/userModel'
 import { pagingSkipValue } from '~/utils/algorithms'
 
 // Define Collection (name & schema)
@@ -42,10 +43,14 @@ const validateBeforeCreate = async (data) => {
 }
 
 //thêm 1 document vào collection trong db
-const createNew = async (data) => {
+const createNew = async (userId, data) => {
   try {
     const validData = await validateBeforeCreate(data)
-    const createdBoard = await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(validData)
+    const newBoardToAdd = {
+      ...validData,
+      ownerIds: [new ObjectId(userId)]
+    }
+    const createdBoard = await GET_DB().collection(BOARD_COLLECTION_NAME).insertOne(newBoardToAdd)
     return createdBoard
   }
   catch (error) { throw new Error(error) }
@@ -59,15 +64,19 @@ const findOneById = async (id) => {
 }
 
 //Query tổng hợp (aggregate) để lấy toàn bộ Column và Cards thuộc về Board
-const getDetails = async (id) => {
+const getDetails = async (userId, boardId) => {
   try {
+    const queryConditions = [
+      { _id: new ObjectId(boardId) },
+      { _destroy: false },
+      { $or: [
+        { ownerIds: { $all: [new ObjectId(userId)] } },
+        { memberIds: { $all: [new ObjectId(userId)] } }
+      ] }
+    ]
+
     const result = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate([
-      {
-        $match: {
-          _id:new ObjectId(id),
-          _destroy: false
-        }
-      },
+      { $match: { $and: queryConditions } },
       {
         $lookup : {
           from: columnModel.COLUMN_COLLECTION_NAME,
@@ -82,10 +91,25 @@ const getDetails = async (id) => {
           localField: '_id',
           foreignField: 'boardId',
           as: 'cards'
-        }
+        } },
+      { $lookup: {
+        from: userModel.USER_COLLECTION_NAME,
+        localField: 'ownerIds',
+        foreignField: '_id',
+        as: 'owners',
+        // pipeline trong lookup là để xử lý một hoặc nhiều luồng cần thiết
+        // $project để chỉ định vài field không muốn lấy về bằng cách gán nó giá trị 0
+        pipeline: [{ $project: { 'password': 0, 'verifyToken': 0 } }]
+      } },
+      { $lookup: {
+        from: userModel.USER_COLLECTION_NAME,
+        localField: 'memberIds',
+        foreignField: '_id',
+        as: 'members',
+        pipeline: [{ $project: { 'password': 0, 'verifyToken': 0 } }]
+      }
       }
     ]).toArray()
-    //console.log(result)
     return result[0] || null
   } catch (error) { throw new Error(error)}
 }

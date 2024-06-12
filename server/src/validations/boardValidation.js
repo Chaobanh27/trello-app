@@ -9,14 +9,14 @@ import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE } from '~/utils/validators'
 const createNew = async (req, res, next) => {
   const correctCondition = Joi.object({
     title: Joi.string().required().min(3).max(50).trim().strict().messages({
-      'any.required': 'Title is required [ChaoBanh]',
-      'string.empty': 'Title can not be empty [ChaoBanh]',
-      'string.max': 'Title length must be less than or equal to characters long [ChaoBanh]',
-      'string.min': 'Title length must be at least characters long [ChaoBanh]',
-      'string.trim': 'Title must not have leading or trailing whitespace [ChaoBanh]'
+      'any.required': 'Title is required (trungquandev)',
+      'string.empty': 'Title is not allowed to be empty (trungquandev)',
+      'string.min': 'Title length must be at least 3 characters long (trungquandev)',
+      'string.max': 'Title length must be less than or equal to 5 characters long (trungquandev)',
+      'string.trim': 'Title must not have leading or trailing whitespace (trungquandev)'
     }),
     description: Joi.string().required().min(3).max(256).trim().strict(),
-    type: Joi.string().valid(BOARD_TYPES.PUBLIC, BOARD_TYPES.PRIVATE).required()
+    type: Joi.string().required().valid(...Object.values(BOARD_TYPES))
   })
   try {
     //console.log( 'req.body:' + req.body)

@@ -8,9 +8,11 @@ import Button from '@mui/material/Button'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useConfirm } from 'material-ui-confirm'
+import { useDispatch } from 'react-redux'
+import { updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
 
 function TrelloCard({ card, deleteCard }) {
-
+  const dispatch = useDispatch()
   const { attributes, listeners, setNodeRef, transform, transition, isDragging
   } = useSortable({ id: card._id, data: { ...card } })
   const dndKitCardStyles = {
@@ -39,8 +41,15 @@ function TrelloCard({ card, deleteCard }) {
       })
       .catch(() => {})
   }
+
+  const setActiveCard = () => {
+    // Cập nhật data cho cái activeCard trong Redux
+    dispatch(updateCurrentActiveCard(card))
+  }
+
   return (
     <Card
+      onClick={setActiveCard}
       ref={setNodeRef} style={dndKitCardStyles} {...attributes} {...listeners}
       sx={{
         cursor: 'pointer',

@@ -1,11 +1,10 @@
-import { Box, Button, Tooltip } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import Chip from '@mui/material/Chip'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import VpnLockIcon from '@mui/icons-material/VpnLock'
 import AddToDriveIcon from '@mui/icons-material/AddToDrive'
-import Avatar from '@mui/material/Avatar'
-import AvatarGroup from '@mui/material/AvatarGroup'
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt'
+import BoardUserGroup from './BoardUserGroup'
 
 function BoardBar(props) {
 
@@ -57,38 +56,7 @@ function BoardBar(props) {
         </Box>
         <Box sx={{ display:'flex', alignItems:'center', gap:2 }}>
           <Button variant='outlined' startIcon={<PersonAddAltIcon/>} >Invite</Button>
-          <AvatarGroup max={7} sx={{
-            '& .MuiSvgIcon-root': {
-              width: 34,
-              height: 34,
-              fontSize: 16
-            }
-          }}>
-            <Tooltip title='user1'>
-              <Avatar alt="Remy Sharp" src="https://picsum.photos/id/400/300/300" />
-            </Tooltip>
-            <Tooltip title='user2'>
-              <Avatar alt="Remy Sharp" src="https://picsum.photos/id/500/300/300" />
-            </Tooltip>
-            <Tooltip title='user3'>
-              <Avatar alt="Remy Sharp" src="https://picsum.photos/id/234/300/300" />
-            </Tooltip>
-            <Tooltip title='user4'>
-              <Avatar alt="Remy Sharp" src="https://picsum.photos/id/337/300/300" />
-            </Tooltip>
-            <Tooltip title='user5'>
-              <Avatar alt="Remy Sharp" src="https://picsum.photos/id/135/300/300" />
-            </Tooltip>
-            <Tooltip title='user6'>
-              <Avatar alt="Remy Sharp" src="https://picsum.photos/id/200/300/300" />
-            </Tooltip>
-            <Tooltip title='user7'>
-              <Avatar alt="Remy Sharp" src="https://picsum.photos/id/100/300/300" />
-            </Tooltip>
-            <Tooltip title='user8'>
-              <Avatar alt="Remy Sharp" src="https://picsum.photos/id/276/300/300" />
-            </Tooltip>
-          </AvatarGroup>
+          <BoardUserGroup boardUsers={board?.FE_allUsers} />
         </Box>
       </Box>
     </>

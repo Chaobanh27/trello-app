@@ -8,7 +8,7 @@ const Router = express.Router()
 
 Router.route('/')
   .get(authMiddleware.isAuthorized, boardController.getBoards)
-  .post(boardValidation.createNew, boardController.createNew)
+  .post(authMiddleware.isAuthorized, boardValidation.createNew, boardController.createNew)
 
 Router.route('/:id')
   .get(authMiddleware.isAuthorized, boardController.getDetails)

@@ -25,15 +25,15 @@ import { toast } from 'react-toastify'
 import { mapOrder } from '../../../../../utils/sort'
 import { useConfirm } from 'material-ui-confirm'
 import { cloneDeep } from 'lodash'
-import { createNewCardAPI, deleteColumnDetailsAPI } from '../../../../../apis'
+import { createNewCardAPI, deleteColumnDetailsAPI, updateColumnDetailsAPI } from '../../../../../apis'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectCurrentActiveBoard, updateCurrentActiveBoard } from '../../../../../redux/activeBoard/activeBoardSlice'
+import ToggleFocusInput from '../../../../../components/Form/ToggleFocusInput'
 
 const COLUMN_HEADER_HEIGHT = '50px'
 const COLUMN_FOOTER_HEIGHT = '56px'
 
 function Column({ column, deleteCard }) {
-  //console.log(column)
   const dispatch = useDispatch()
   const board = useSelector(selectCurrentActiveBoard)
 
@@ -57,7 +57,7 @@ function Column({ column, deleteCard }) {
     //Gọi API tạo mới card và làm lại dữ liệu state board
     const createdCard = await createNewCardAPI({
       ...newCardData,
-      boardId: '655661e4a79869e31e9cb1bc'
+      boardId: column.boardId
     })
     //console.log(createdCard)
 
@@ -114,6 +114,17 @@ function Column({ column, deleteCard }) {
       .catch(() => {})
   }
 
+  const onUpdateColumnTitle = (newTitle) => {
+    // Gọi API update Column và xử lý dữ liệu board trong redux
+    updateColumnDetailsAPI(column._id, { title: newTitle }).then(() => {
+      const newBoard = cloneDeep(board)
+      const columnToUpdate = newBoard.columns.find(c => c._id === column._id)
+      if (columnToUpdate) columnToUpdate.title = newTitle
+
+      dispatch(updateCurrentActiveBoard(newBoard))
+    })
+  }
+
   const { attributes, listeners, setNodeRef, transform, transition, isDragging
   } = useSortable({ id: column._id, data: { ...column } })
 
@@ -160,7 +171,12 @@ function Column({ column, deleteCard }) {
           alignItems: 'center',
           justifyContent: 'space-between'
         }}>
-          <Typography>{column?.title}</Typography>
+          {/* <Typography>{column?.title}</Typography> */}
+          <ToggleFocusInput
+            value={column?.title}
+            onChangedValue={onUpdateColumnTitle}
+            data-no-dnd="true"
+          />
           <Box>
             <ExpandMoreIcon
               sx={{ color: 'text.primary', cursor: 'pointer' }}

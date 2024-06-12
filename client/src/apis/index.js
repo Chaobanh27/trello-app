@@ -34,6 +34,13 @@ export const moveCardToDifferentColumnAPI = async (updateData) => {
   return request.data
 }
 
+//Boards
+export const createNewBoardAPI = async (data) => {
+  const response = await authorizedAxiosInstance.post(`${API_ROOT}/v1/boards`, data)
+  toast.success('Board created successfully')
+  return response.data
+}
+
 //Columns
 export const createNewColumnAPI = async (newColumnData) => {
   const response = await authorizedAxiosInstance.post(`${API_ROOT}/v1/columns`, newColumnData)
@@ -54,11 +61,16 @@ export const createNewCardAPI = async (newCardData) => {
   const response = await authorizedAxiosInstance.post(`${API_ROOT}/v1/cards`, newCardData)
   return response.data
 }
+
 export const deleteCardAPI = async (cardId) => {
   const request = await authorizedAxiosInstance.delete(`${API_ROOT}/v1/cards/${cardId}`)
   return request.data
 }
 
+export const updateCardDetailsAPI = async (cardId, updateData) => {
+  const response = await authorizedAxiosInstance.put(`${API_ROOT}/v1/cards/${cardId}`, updateData)
+  return response.data
+}
 
 export const refreshTokenAPI = async () => {
   const response = await authorizedAxiosInstance.get(`${API_ROOT}/v1/users/refresh_token`)

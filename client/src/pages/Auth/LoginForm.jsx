@@ -36,7 +36,6 @@ const LoginForm = () => {
   const verifiedEmail = searchParams.get('verifiedEmail')
 
   const submitLogIn = (data) => {
-    console.log('submit login: ', data)
     const { email, password } = data
 
     toast.promise(

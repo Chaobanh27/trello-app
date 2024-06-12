@@ -1,6 +1,6 @@
 /*eslint-disable no-console  */
 /*eslint-disable no-useless-catch*/
-// import { slugify } from '~/utils/formatters'
+import { slugify } from '~/utils/formatters'
 import { boardModel } from '~/models/boardModel'
 import { columnModel } from '~/models/columnModel'
 import { cardModel } from '~/models/cardModel'
@@ -10,16 +10,16 @@ import { cloneDeep } from 'lodash'
 import { formattedTime } from '~/utils/TimeFormat'
 import { DEFAULT_PAGE, DEFAULT_ITEMS_PER_PAGE } from '~/utils/constants'
 
-const createNew = async (reqBody) => {
+const createNew = async (userId, reqBody) => {
   try {
     //xử lý logic dữ liệu tùy đặc thù dự án
     const newBoard = {
-      ...reqBody
-      //slug: slugify(reqBody.title)
+      ...reqBody,
+      slug: slugify(reqBody.title)
     }
 
     //gọi tới tầng model để lưu bản ghi vào database
-    const createdBoard = await boardModel.createNew(newBoard)
+    const createdBoard = await boardModel.createNew(userId, newBoard)
     //gọi tới model để tìm id vừa mới tạo và trả về thông tin mới tạo
     const findOneById = await boardModel.findOneById(createdBoard.insertedId)
     //trả về thông tin mới tạo
@@ -27,10 +27,10 @@ const createNew = async (reqBody) => {
   } catch (error) { throw error }
 }
 
-const getDetails = async (boardId) => {
+const getDetails = async (userId, boardId) => {
   try {
     //gọi tới model để tìm id vừa mới tạo và trả về thông tin mới tạo
-    const board = await boardModel.getDetails(boardId)
+    const board = await boardModel.getDetails(userId, boardId)
     if (!board) {
       throw new ApiError(StatusCodes.NOT_FOUND, 'Board not found! ')
     }
