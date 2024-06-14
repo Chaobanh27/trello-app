@@ -1,18 +1,18 @@
 import ModeSelect from '../ModeSelect/ModeSelect'
-import { Box, Button, SvgIcon, TextField, Typography } from '@mui/material'
+import { Box, Button, SvgIcon, Typography } from '@mui/material'
 import AppsIcon from '@mui/icons-material/Apps'
 import { ReactComponent as TrelloIcon } from '../../assets/trello.svg'
 import Workspaces from './Menus/Workspaces'
 import Recent from './Menus/Recent'
 import Starred from './Menus/Starred'
 import Templates from './Menus/Templates'
-import AccountCircle from '@mui/icons-material/AccountCircle'
-import InputAdornment from '@mui/material/InputAdornment'
-// import Badge from '@mui/material/Badge'
 import Tooltip from '@mui/material/Tooltip'
-import NotificationsIcon from '@mui/icons-material/Notifications'
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import Profiles from './Menus/Profiles'
 import { Link } from 'react-router-dom'
+import Notifications from './Notifications/Notifications'
+import AutoCompleteSearchBoard from './SearchBoards/AutoCompleteSearchBoard'
+
 
 function AppBar() {
   return (
@@ -53,38 +53,17 @@ function AppBar() {
 
         </Box>
         <Box sx={{ display:'flex', alignItems:'center', gap:2 }}>
-          <TextField
-            id='outline-search'
-            label='Search...'
-            type='search'
-            size='small'
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <AccountCircle sx={{ color: 'white' }} />
-                </InputAdornment>
-              )
-            }}
-            sx={{
-              minWidth: '120px',
-              maxWidth: '170px',
-              '&label': { color: 'white' },
-              '&input' : { color: 'white' },
-              '& label.Mui-focused': { color : 'white' },
-              '& .MuiOutlinedInput-root' : {
-                '& fieldset' : {
-                  borderColor: 'white'
-                },
-                '&:hover fieldset' : {
-                  borderColor: 'white'
-                }
-              }
-            }}
-          />
+          {/* Tìm kiếm nhanh một hoặc nhiều cái board */}
+          <AutoCompleteSearchBoard />
+
+          {/* Dark - Light - System modes */}
           <ModeSelect/>
 
-          <Tooltip title="notification">
-            <NotificationsIcon color="action" />
+          {/* Xử lý hiển thị các thông báo - notifications ở đây */}
+          <Notifications />
+
+          <Tooltip title="Help">
+            <HelpOutlineIcon sx={{ cursor: 'pointer', color: 'white' }} />
           </Tooltip>
 
           <Profiles />

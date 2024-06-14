@@ -33,7 +33,9 @@ const update = async (req, res, next) => {
     const cardCoverFile = req.file
     // console.log('cardCoverFile', cardCoverFile)
 
-    const updatedCard = await cardService.update(cardId, req.body, cardCoverFile)
+    const userInfo = req.jwtDecoded
+    const updatedCard = await cardService.update(cardId, req.body, cardCoverFile, userInfo)
+
     res.status(StatusCodes.OK).json(updatedCard)
   } catch (error) { next(error) }
 }

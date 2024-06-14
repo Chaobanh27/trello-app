@@ -9,7 +9,7 @@ import Tooltip from '@mui/material/Tooltip'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 
-function CardActivitySection() {
+function CardActivitySection({ cardComments=[], onAddCardComment }) {
   const currentUser = useSelector(selectCurrentUser)
 
   const handleAddCardComment = (event) => {
@@ -25,6 +25,10 @@ function CardActivitySection() {
         content: event.target.value.trim()
       }
       console.log(commentToAdd)
+      // Gọi lên Props ở component cha
+      onAddCardComment(commentToAdd).then(() => {
+        event.target.value = ''
+      })
     }
   }
 
@@ -48,25 +52,25 @@ function CardActivitySection() {
       </Box>
 
       {/* Hiển thị danh sách các comments */}
-      {[...Array(0)].length === 0 &&
+      {cardComments.length === 0 &&
         <Typography sx={{ pl: '45px', fontSize: '14px', fontWeight: '500', color: '#b1b1b1' }}>No activity found!</Typography>
       }
-      {[...Array(3)].map((_, index) =>
+      {cardComments.map((comment, index) =>
         <Box sx={{ display: 'flex', gap: 1, width: '100%', mb: 1.5 }} key={index}>
           <Tooltip title="trungquandev">
             <Avatar
               sx={{ width: 36, height: 36, cursor: 'pointer' }}
               alt="trungquandev"
-              src="https://trungquandev.com/wp-content/uploads/2019/06/trungquandev-cat-avatar.png"
+              src={comment.userAvatar}
             />
           </Tooltip>
           <Box sx={{ width: 'inherit' }}>
             <Typography variant="span" sx={{ fontWeight: 'bold', mr: 1 }}>
-              Quan Do
+              {comment.userDisplayName}
             </Typography>
 
             <Typography variant="span" sx={{ fontSize: '12px' }}>
-              {moment().format('llll')}
+              {moment(comment.commentedAt).format('llll')}
             </Typography>
 
             <Box sx={{
@@ -79,7 +83,7 @@ function CardActivitySection() {
               wordBreak: 'break-word',
               boxShadow: '0 0 1px rgba(0, 0, 0, 0.2)'
             }}>
-              This is a comment!
+              {comment.content}
             </Box>
           </Box>
         </Box>

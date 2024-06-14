@@ -146,7 +146,6 @@ const updateColumnOrderIds = async (boardId, updateData) => {
   } catch (error) { throw new Error(error) }
 }
 
-
 //lấy 1 phần tử columnIds ra khỏi mảng columnOrderIds
 //dùng $pull của mongodb để lấy phần tử ra khỏi mảng và xáo nó đi
 const pullColumnOrderIds = async (column) => {
@@ -160,7 +159,7 @@ const pullColumnOrderIds = async (column) => {
   } catch (error) { throw new Error(error) }
 }
 
-const getBoards = async (userId, page, itemsPerPage) => {
+const getBoards = async (userId, page, itemsPerPage, queryFilters) => {
   try {
     const queryConditions = [
       // Điều kiện 01: Board chưa bị xóa
@@ -171,6 +170,21 @@ const getBoards = async (userId, page, itemsPerPage) => {
         { memberIds: { $all: [new ObjectId(userId)] } }
       ] }
     ]
+
+    // Xử lý query filter cho từng trường hợp search board, ví dụ search theo title
+    if (queryFilters) {
+      Object.keys(queryFilters).forEach(key => {
+        // queryFilters[key] ví dụ queryFilters[title] nếu phía FE đẩy lên q[title]
+
+        // Có phân biệt chữ hoa chữ thường
+        // queryConditions.push({ [key]: { $regex: queryFilters[key] } })
+
+        // Không phân biệt chữ hoa chữ thường
+        queryConditions.push({ [key]: { $regex: new RegExp(queryFilters[key], 'i') } })
+      })
+    }
+    // console.log('queryConditions: ', queryConditions)
+
 
     const query = await GET_DB().collection(BOARD_COLLECTION_NAME).aggregate(
       [
@@ -204,6 +218,17 @@ const getBoards = async (userId, page, itemsPerPage) => {
   } catch (error) { throw new Error(error) }
 }
 
+const pushMemberIds = async (boardId, userId) => {
+  try {
+    const result = await GET_DB().collection(BOARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(boardId) },
+      { $push: { memberIds: new ObjectId(userId) } },
+      { returnDocument: 'after' }
+    )
+    return result
+  } catch (error) { throw new Error(error) }
+}
+
 export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
@@ -213,7 +238,8 @@ export const boardModel = {
   pushColumnOrderIds,
   updateColumnOrderIds,
   pullColumnOrderIds,
-  getBoards
+  getBoards,
+  pushMemberIds
 }
 
 

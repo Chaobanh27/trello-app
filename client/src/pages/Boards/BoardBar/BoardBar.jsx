@@ -1,10 +1,10 @@
-import { Box, Button } from '@mui/material'
+import { Box } from '@mui/material'
 import Chip from '@mui/material/Chip'
 import DashboardIcon from '@mui/icons-material/Dashboard'
 import VpnLockIcon from '@mui/icons-material/VpnLock'
 import AddToDriveIcon from '@mui/icons-material/AddToDrive'
-import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt'
 import BoardUserGroup from './BoardUserGroup'
+import InviteBoardUser from './InviteBoardUser'
 
 function BoardBar(props) {
 
@@ -55,7 +55,8 @@ function BoardBar(props) {
             clickable />
         </Box>
         <Box sx={{ display:'flex', alignItems:'center', gap:2 }}>
-          <Button variant='outlined' startIcon={<PersonAddAltIcon/>} >Invite</Button>
+          {/* Xử lý mời user vào làm thành viên của board */}
+          <InviteBoardUser boardId={board._id} />
           <BoardUserGroup boardUsers={board?.FE_allUsers} />
         </Box>
       </Box>

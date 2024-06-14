@@ -9,7 +9,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useConfirm } from 'material-ui-confirm'
 import { useDispatch } from 'react-redux'
-import { updateCurrentActiveCard } from '~/redux/activeCard/activeCardSlice'
+import { updateCurrentActiveCard, showModalActiveCard } from '~/redux/activeCard/activeCardSlice'
 
 function TrelloCard({ card, deleteCard }) {
   const dispatch = useDispatch()
@@ -45,6 +45,8 @@ function TrelloCard({ card, deleteCard }) {
   const setActiveCard = () => {
     // Cập nhật data cho cái activeCard trong Redux
     dispatch(updateCurrentActiveCard(card))
+    // Hiện Modal ActiveCard lên
+    dispatch(showModalActiveCard())
   }
 
   return (

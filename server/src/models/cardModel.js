@@ -3,6 +3,8 @@ import { GET_DB } from '~/config/mongodb'
 import { ObjectId } from 'mongodb'
 import { formattedTime } from '~/utils/TimeFormat'
 import { OBJECT_ID_RULE, OBJECT_ID_RULE_MESSAGE, EMAIL_RULE, EMAIL_RULE_MESSAGE } from '~/utils/validators'
+import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
+
 
 // Define Collection (name & schema)
 const CARD_COLLECTION_NAME = 'cards'
@@ -96,6 +98,53 @@ const deleteOneById = async (cardId) => {
   } catch (error) { throw new Error(error) }
 }
 
+/**
+  * Đẩy một phần tử comment vào đầu mảng comments!
+  * - Trong JS, ngược lại với push (thêm phần tử vào cuối mảng) sẽ là unshift (thêm phần tử vào đầu mảng)
+  * - Nhưng trong mongodb hiện tại chỉ có $push - mặc định đẩy phần tử vào cuối mảng.
+  * Dĩ nhiên cứ lưu comment mới vào cuối mảng cũng được, nhưng nay sẽ học cách để thêm phần tử vào đẩu mảng trong mongodb.
+  * Vẫn dùng $push, nhưng bọc data vào Array để trong $each và chỉ định $position: 0
+  * https://stackoverflow.com/a/25732817/8324172
+  * https://www.mongodb.com/docs/manual/reference/operator/update/position/
+*/
+const unshiftNewComment = async (cardId, commentData) => {
+  try {
+    const result = await GET_DB().collection(CARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(cardId) },
+      { $push: { comments: { $each: [commentData], $position: 0 } } },
+      { returnDocument: 'after' }
+    )
+    return result
+  } catch (error) { throw new Error(error) }
+}
+
+/**
+* Hàm này sẽ có nhiệm vụ xử lý cập nhật thêm hoặc xóa member khỏi card dựa theo Action
+* sẽ dùng $push để thêm hoặc $pull để loại bỏ ($pull trong mongodb để lấy một phần tử ra khỏi mảng rồi xóa nó đi)
+*/
+const updateMembers = async (cardId, incomingMemberInfo) => {
+  try {
+    // Tạo ra một biến updateCondition ban đầu là rỗng
+    let updateCondition = {}
+    if (incomingMemberInfo.action === CARD_MEMBER_ACTIONS.ADD) {
+      // console.log('Trường hợp Add, dùng $push: ', incomingMemberInfo)
+      updateCondition = { $push: { memberIds: new ObjectId(incomingMemberInfo.userId) } }
+    }
+
+    if (incomingMemberInfo.action === CARD_MEMBER_ACTIONS.REMOVE) {
+      // console.log('Trường hợp Remove, dùng $pull: ', incomingMemberInfo)
+      updateCondition = { $pull: { memberIds: new ObjectId(incomingMemberInfo.userId) } }
+    }
+
+    const result = await GET_DB().collection(CARD_COLLECTION_NAME).findOneAndUpdate(
+      { _id: new ObjectId(cardId) },
+      updateCondition, // truyền cái updateCondition ở đây
+      { returnDocument: 'after' }
+    )
+    return result
+  } catch (error) { throw new Error(error) }
+}
+
 export const cardModel = {
   CARD_COLLECTION_NAME,
   CARD_COLLECTION_SCHEMA,
@@ -103,5 +152,7 @@ export const cardModel = {
   findOneById,
   update,
   deleteManyByColumnId,
-  deleteOneById
+  deleteOneById,
+  unshiftNewComment,
+  updateMembers
 }
