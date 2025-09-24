@@ -1,7 +1,3 @@
-/**
- * TrungQuanDev: https://youtube.com/@trungquandev
- */
-
 // Một vài biểu thức chính quy - Regular Expression và custom message.
 // Về Regular Expression khá hại não: https://viblo.asia/p/hoc-regular-expression-va-cuoc-doi-ban-se-bot-kho-updated-v22-Az45bnoO5xY
 export const FIELD_REQUIRED_MESSAGE = 'This field is required.'

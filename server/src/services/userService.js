@@ -122,8 +122,8 @@ const refreshToken = async (clientRefreshToken) => {
     const accessToken = await JwtProvider.generateToken(
       userInfo,
       env.ACCESS_TOKEN_SECRET_SIGNATURE,
-      5 // 5 giây
-      // env.ACCESS_TOKEN_LIFE
+      //5 // 5 giây
+      env.ACCESS_TOKEN_LIFE
     )
 
     return { accessToken }

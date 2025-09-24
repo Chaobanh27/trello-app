@@ -283,15 +283,10 @@ function BoardContent({ board, moveColumns, moveCardIntheSameColumn, moveCardToD
         //console.log('newColumnIndex:', newColumnIndex)
         //dung arrayMove cua DnD-kit de sap xep lai mang Column ban dau
         const dndOrderedColumns = arrayMove(orderedColumns, oldColumnIndex, newColumnIndex)
-
-
         //gọi update state ở đây để tránh delay hoặc flickering giao diện lúc kéo thả khi phải chờ gọi API
         //cập nhật lại state column ban đầu sau khi kéo thả
         setOrderedColumns(dndOrderedColumns)
-
-
         moveColumns(dndOrderedColumns)
-
       }
     }
 
@@ -347,6 +342,9 @@ function BoardContent({ board, moveColumns, moveCardIntheSameColumn, moveCardToD
   }, [activeDragItemType, orderedColumns])
 
   //console.log(orderedColumns)
+
+  //sensors được sử dụng để xác định các thiết bị nhập vào mà bạn muốn hỗ trợ (chuột, cảm ứng)
+  //collisionDetection là hàm xác định khi nào một đối tượng được coi là va chạm với một đối tượng khác trong quá trình kéo.
   return (
     <>
       <DndContext

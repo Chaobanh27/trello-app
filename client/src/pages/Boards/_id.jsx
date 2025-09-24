@@ -27,6 +27,8 @@ function Board() {
   const dispatch = useDispatch()
   //không dùng state của component nữa mà dùng state của redux
   // const [board, setBoard] = useState(null)
+
+  //sử dụng useSelector truyền vào đó hàm selector thì hàm đó sẽ nhận state toàn cục làm đối số
   const board = useSelector(selectCurrentActiveBoard)
   const activeCard = useSelector(selectCurrentActiveCard)
 

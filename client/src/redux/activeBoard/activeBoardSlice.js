@@ -20,7 +20,7 @@ export const fetchBoardDetailsAPI = createAsyncThunk(
   }
 )
 
-//Khởi tạo slice trong kho lu=u tru redux trong redux
+//Khởi tạo slice trong kho luu tru redux trong redux
 export const activeBoardSlice = createSlice({
   name:'activeBoard',
   initialState,
